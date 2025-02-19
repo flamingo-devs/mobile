@@ -1,0 +1,20 @@
+name: Notificar Discord sobre PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar mensagem ao Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          PR_USER: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"Novo PR aberto por **$PR_USER**: $PR_URL\"}" \
+               $DISCORD_WEBHOOK
